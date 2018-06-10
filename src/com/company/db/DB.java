@@ -4,7 +4,7 @@ import com.company.structure.file;
 
 import java.sql.*;
 
-public class filesDB {
+public class DB {
     static Connection c = null;
     static Statement stmt = null;
 
@@ -12,6 +12,8 @@ public class filesDB {
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:" + name + ".db");
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
             System.out.println("sucess db opened");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -29,7 +31,7 @@ public class filesDB {
                     " TAGS         TEXT, " +
                     " DATA        INTEGER )";
             stmt.executeUpdate(sql);
-
+            c.commit();
             System.out.println("Table created successfully");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -41,8 +43,6 @@ public class filesDB {
      */
     public static void insertData(String tableName, file file) {
         try {
-            c.setAutoCommit(false);
-            stmt = c.createStatement();
 //            String sql = "INSERT INTO "+tableName+" (PATH,NAME,SIZE,TAGS,DATA) " +
 //                    "VALUES ('folder1', 'file1', '22,8', '#tag1 #tag2','data') ;";
             String sql = "INSERT INTO " + tableName + " (PATH,NAME,SIZE,TAGS,DATA) " +
@@ -61,12 +61,10 @@ public class filesDB {
      */
     public static void updateTags(String tableName, file file) {
         try {
-            c.setAutoCommit(false);
-            stmt = c.createStatement();
-
-            String sql = "UPDATE " + tableName + " set TAGS = '" + file.tags + "' where PATH='" + file.path + "' AND NAME='" + file.name + "';";
+            String sql = "UPDATE " + tableName + " set TAGS = '" +
+                    file.tags + "' where PATH='" + file.path +
+                    "' AND NAME='" + file.name + "';";
             stmt.executeUpdate(sql);
-
             c.commit();
             System.out.println("sucess db updated");
         } catch (Exception e) {
@@ -76,9 +74,9 @@ public class filesDB {
 
     public static void deleteTable(String tableName) {
         try {
-            stmt = c.createStatement();
             String sql = "DROP TABLE IF EXISTS " + tableName + ";";
             stmt.executeUpdate(sql);
+            c.commit();
             System.out.println("success deleted");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -88,8 +86,6 @@ public class filesDB {
     // TODO: 10.06.18 Qqq
     public static void deleteRow(String tableName) {
         try {
-            c.setAutoCommit(false);
-            stmt = c.createStatement();
             String sql = "DELETE from " + tableName + " where NAME='cdsdv';";
             stmt.executeUpdate(sql);
             c.commit();
@@ -104,8 +100,6 @@ public class filesDB {
         try {
             String condition = "NAME='test'";
 
-            c.setAutoCommit(false);
-            stmt = c.createStatement();
             rs = stmt.executeQuery("SELECT * FROM " + tableName + " where " + condition + ";");
             while (rs.next()) {
 

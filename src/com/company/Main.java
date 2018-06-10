@@ -11,8 +11,10 @@ public class Main {
      */
     public static void main(String[] args) {
         regulator r = new regulator();
-        regulator.setPath("/home/bulat/allFiles");
-        regulator.makeDbTest();
+        r.setPath("/home/bulat/allFiles");
+//        r.makeDbTest();
+        r.searchFiles();
+        r.addFilesFromSearchToDB();
     }
 
 }

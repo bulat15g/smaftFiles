@@ -9,7 +9,7 @@ public class file {
     public double size;
     public int data;
 
-    public file(String path, String name, String tags, float size, int data) {
+    public file(String path, String name, String tags, double size, int data) {
         this.path = path;
         this.name = name;
         this.tags = tags;
